@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">1</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">2</span></a>
 
   </li>
   </ul>
@@ -145,6 +145,132 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://code4love.com/2022/08/22/opc%20da%20remote%20config/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Ryu">
+      <meta itemprop="description" content="行至水穷处，坐看云起时">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Code for Love">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/22/opc%20da%20remote%20config/" class="post-title-link" itemprop="url">OPC DA局域网远程连接精简配置实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-08-22 14:24:00 / 修改时间：16:21:15" itemprop="dateCreated datePublished" datetime="2022-08-22T14:24:00+08:00">2022-08-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E6%8E%A7/" itemprop="url" rel="index"><span itemprop="name">工控</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/08/22/opc%20da%20remote%20config/" class="post-meta-item leancloud_visitors" data-flag-title="OPC DA局域网远程连接精简配置实践" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/08/22/opc%20da%20remote%20config/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/08/22/opc%20da%20remote%20config/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="太长不看"><a href="#太长不看" class="headerlink" title="太长不看"></a>太长不看</h2><p>opc da局域网远程连接的配置进行过许多次，由于DCOM配置本身相对偏僻，前后使用的Windows开发与调试环境也不尽相同，所以每次都是参照教程摸索着走，以至于成不成功全看天意。今日刚好项目需要，遂于午后与吾友<code>@bool</code>使用两台机器一一尝试总结，乃成此文。</p>
+<h2 id="服务端设置"><a href="#服务端设置" class="headerlink" title="服务端设置"></a>服务端设置</h2><h3 id="1-添加专用的用户和用户组"><a href="#1-添加专用的用户和用户组" class="headerlink" title="1. 添加专用的用户和用户组"></a>1. 添加专用的用户和用户组</h3><ul>
+<li>在<code>运行</code>中键入命令<code>lusrmgr.msc</code>打开<code>本地用户和组</code></li>
+<li>在用户中新建一个用户<code>OPCUser</code>，输入适当的密码（密码不可为空），并作如下设置：<br><img src="https://api.onedrive.com/v1.0/shares/s!AuARQ03xNIEnywhOyU_zIrDaoV-3/root/content" alt="图 1"></li>
+<li>在用户组中新建一个用户组<code>OPCGroup</code>，并将<code>OPCUser</code>添加到该组<br><img src="https://api.onedrive.com/v1.0/shares/s!AuARQ03xNIEnywkP_iTvqV3MDApC/root/content" alt="图 2"></li>
+<li><strong>注:如果打算直接使用当前已存在的用户连接OPC DA服务，则该步骤也可以省略，但有个前提：该用户密码不可为空。</strong></li>
+</ul>
+<h3 id="2-DCOM配置"><a href="#2-DCOM配置" class="headerlink" title="2. DCOM配置"></a>2. DCOM配置</h3><ul>
+<li>在<code>运行</code>中键入命令<code>dcomcnfg</code>打开组件服务，进行如下配置：</li>
+<li>OPCEnum配置<ul>
+<li>在<code>组件服务</code>|<code>计算机</code>|<code>我的电脑</code>|<code>DCOM配置</code>中，找到<code>OPCEnum</code></li>
+<li>右键<code>属性</code>，并切换到<code>安全</code>选项卡</li>
+<li>在<code>启动与激活权限</code>中，选择<code>自定义</code>，并点击<code>编辑</code></li>
+<li>添加<code>OPCGroup</code>用户组，并赋予全部权限如下：<br><img src="https://api.onedrive.com/v1.0/shares/s!AuARQ03xNIEnywoAWawqrevi7f68/root/content" alt="图 3"></li>
+<li>在访问权限中，也作类似配置</li>
+</ul>
+</li>
+<li>OPC DA服务运行时配置（以开普华Kepsware的opc da为例）</li>
+<li>在<code>组件服务</code>|<code>计算机</code>|<code>我的电脑</code>|<code>DCOM配置</code>中，找到<code>KEPSErverEX 6.5</code></li>
+<li>右键<code>属性</code>，并切换到<code>安全</code>选项卡</li>
+<li>在<code>启动与激活权限</code>中，选择<code>自定义</code>，并点击<code>编辑</code></li>
+<li>添加<code>OPCGroup</code>用户组，并赋予全部权限如下：<br>  <img src="https://api.onedrive.com/v1.0/shares/s!AuARQ03xNIEnywsNy-rqmLq6KD4U/root/content" alt="图 4"></li>
+<li>在<code>访问权限</code>中，也作类似配置</li>
+</ul>
+<h3 id="3-防护墙设置"><a href="#3-防护墙设置" class="headerlink" title="3. 防护墙设置"></a>3. 防护墙设置</h3><ul>
+<li>在<code>运行</code>中键入命令<code>firewall.cpl</code>打开防火墙控制面板，进入<code>高级设置</code><br><img src="https://api.onedrive.com/v1.0/shares/s!AuARQ03xNIEnywyfPGvaNJWg12Aj/root/content" alt="图 5"></li>
+<li>在<code>入站规则</code>上右键<code>新建规则</code>，新建一个<code>端口规则</code>，开放<code>135</code>端口访问权限；</li>
+<li>在<code>入站规则</code>上右键<code>新建规则</code>，新建一个<code>程序规则</code>，开放<code>C:\Windows\SysWow64\opcenum</code>访问权限；</li>
+<li>在<code>入站规则</code>上右键<code>新建规则</code>，新建一个<code>程序规则</code>，开放<code>C:\Program Files (x86)\Kepware\KEPServerEX 6\server_runtime.exe</code>OPC DA服务运行时访问权限；</li>
+<li><strong>注：服务端并不要求登录该OPCUser作为当前用户</strong></li>
+</ul>
+<h2 id="客户端设置"><a href="#客户端设置" class="headerlink" title="客户端设置"></a>客户端设置</h2><h3 id="1-添加专用用户"><a href="#1-添加专用用户" class="headerlink" title="1.添加专用用户"></a>1.添加专用用户</h3><ul>
+<li>在<code>运行</code>中键入命令<code>lusrmgr.msc</code>打开<code>本地用户和组</code></li>
+<li>在用户中新建一个用户<code>OPCUser</code>，输入与上面所创建的用户相同的用户名和密码，并作如下设置：<br><img src="https://api.onedrive.com/v1.0/shares/s!AuARQ03xNIEnyw3rWyW8cV0zOY2c/root/content" alt="图 6"></li>
+</ul>
+<h3 id="2-访问服务端"><a href="#2-访问服务端" class="headerlink" title="2. 访问服务端"></a>2. 访问服务端</h3><ul>
+<li>登录该<code>OPCUser</code>用户，即可在该电脑上访问服务端电脑上的OPC DA服务</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -320,16 +446,16 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
